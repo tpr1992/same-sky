@@ -16,4 +16,7 @@
   RCT_EXTERN_METHOD(exportBase64:(nonnull NSNumber *)reactTag
                     resolver:(RCTPromiseResolveBlock)resolve
                     rejecter:(RCTPromiseRejectBlock)reject)
+  RCT_EXTERN_METHOD(exportBase64Snapshot:(nonnull NSNumber *)reactTag
+                    resolver:(RCTPromiseResolveBlock)resolve
+                    rejecter:(RCTPromiseRejectBlock)reject)
 @end

@@ -76,6 +76,10 @@
       <key>NSAllowsLocalNetworking</key>
       <true/>
     </dict>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>We save your drawings to Photos.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>We access your photo library to save drawings.</string>
     <key>NSUserActivityTypes</key>
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>

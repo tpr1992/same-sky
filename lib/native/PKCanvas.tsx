@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useRef } from 'react'
-import { requireNativeComponent, findNodeHandle, NativeModules, ViewProps } from 'react-native'
+import { findNodeHandle, NativeModules, requireNativeComponent, ViewProps } from 'react-native'
 
-type Tool = 'pencil' | 'pen' | 'marker' | 'eraserVector' | 'eraserBitmap'
+type Tool = 'pencil' | 'pen' | 'marker' | 'fountainPen' | 'eraserVector' | 'eraserBitmap'
 
 type Props = ViewProps & {
   tool?: Tool
@@ -13,37 +13,59 @@ type Props = ViewProps & {
   onEnd?: () => void
 }
 
-const NativePK = requireNativeComponent<Props>('RNPKCanvasView')
+const COMPONENT_NAME = 'RNPKCanvasView'
+const MANAGER_NAME = 'RNPKCanvasViewManager'
+
+const NativePK = requireNativeComponent<Props>(COMPONENT_NAME)
 
 export type PKCanvasRef = {
   clear(): void
   undo(): void
   redo(): void
   setDrawingPolicy(policy: 'any' | 'pencilOnly'): void
-  exportBase64(): Promise<string> // PNG base64
+  exportBase64(): Promise<string>
+  exportBase64Snapshot(): Promise<string>
+  testBridge(): void
 }
 
 export const PKCanvas = forwardRef<PKCanvasRef, Props>((props, ref) => {
-  const innerRef = useRef(null)
+  const innerRef = useRef<any>(null)
+  const manager = (NativeModules as any)[MANAGER_NAME]
+
+  const getTag = () => {
+    const tag = findNodeHandle(innerRef.current)
+    if (tag == null) {
+      throw new Error('PKCanvas view not mounted yet')
+    }
+    return tag
+  }
+
+  const call = (method: string, args: any[] = []) => {
+    if (!manager?.[method]) {
+      console.warn(`PKCanvas: native method ${method} is not available on ${MANAGER_NAME}`)
+      return
+    }
+    const tag = getTag()
+    manager[method](tag, ...args)
+  }
+
+  const callPromise = (method: string, args: any[] = []) => {
+    if (!manager?.[method]) {
+      return Promise.reject(new Error(`PKCanvas: native method ${method} is not available on ${MANAGER_NAME}`))
+    }
+    const tag = getTag()
+    return manager[method](tag, ...args)
+  }
 
   useImperativeHandle(ref, () => ({
     clear: () => call('clear'),
     undo: () => call('undo'),
     redo: () => call('redo'),
-    setDrawingPolicy: (p) => call('setDrawingPolicy', [p === 'pencilOnly' ? 'pencilOnly' : 'any']),
+    setDrawingPolicy: p => call('setDrawingPolicy', [p === 'pencilOnly' ? 'pencilOnly' : 'any']),
     exportBase64: () => callPromise('exportBase64'),
+    exportBase64Snapshot: () => callPromise('exportBase64Snapshot'),
+    testBridge: () => call('testBridge') // will no-op with a warning if not exposed natively
   }))
-
-  const call = (method: string, args: any[] = []) => {
-    const tag = findNodeHandle(innerRef.current)
-    // methods are on the manager module, pass reactTag
-    ;(NativeModules as any).RNPKCanvasViewManager[method](tag, ...args)
-  }
-
-  const callPromise = (method: string, args: any[] = []) => {
-    const tag = findNodeHandle(innerRef.current)
-    return (NativeModules as any).RNPKCanvasViewManager[method](tag, ...args)
-  }
 
   return <NativePK ref={innerRef} {...props} />
 })
