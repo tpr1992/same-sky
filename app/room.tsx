@@ -132,7 +132,26 @@ export default function Room() {
     }
 
     const onHotspot = async (id: Hotspot['id']) => {
-        if (id === 'notebook') router.push('/notebook-canvas-v2')
+        if (id === 'notebook') {
+            Alert.alert(
+                'Drawing Canvas',
+                'How would you like to draw?',
+                [
+                    {
+                        text: 'Solo Drawing',
+                        onPress: () => router.push('/notebook-canvas-v2')
+                    },
+                    {
+                        text: 'Multi-User',
+                        onPress: () => router.push('/multi-user-setup')
+                    },
+                    {
+                        text: 'Cancel',
+                        style: 'cancel'
+                    }
+                ]
+            )
+        }
         if (id === 'window')   Alert.alert('Window', 'Sky • time • weather • constellations')
         if (id === 'lamp')     Alert.alert('Lamp', 'Toggle lamp + set co-reading light scene')
         if (id === 'calendar') Alert.alert('Calendar', 'View the calendar for important dates')

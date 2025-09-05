@@ -228,6 +228,30 @@ class RNPKCanvasView: UIView, PKCanvasViewDelegate {
     private func imgFromDrawing(rect: CGRect, scale: CGFloat) -> UIImage {
         canvas.drawing.image(from: rect, scale: scale)
     }
+
+    func exportDrawingData() -> String? {
+        do {
+            let data = try canvas.drawing.dataRepresentation()
+            return data.base64EncodedString()
+        } catch {
+            print("❌ exportDrawingData: failed to serialize PKDrawing - \(error)")
+            return nil
+        }
+    }
+
+    func loadDrawingData(_ dataString: String) {
+        guard let data = Data(base64Encoded: dataString) else {
+            print("❌ loadDrawingData: invalid base64 string")
+            return
+        }
+        
+        do {
+            let drawing = try PKDrawing(data: data)
+            canvas.drawing = drawing
+        } catch {
+            print("❌ loadDrawingData: failed to deserialize PKDrawing - \(error)")
+        }
+    }
 }
 
 private extension UIColor {

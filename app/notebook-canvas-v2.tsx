@@ -1,12 +1,13 @@
 import { Feather } from '@expo/vector-icons'
 import * as MediaLibrary from 'expo-media-library'
 import { useRouter } from 'expo-router'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Alert, Modal, Platform, Pressable, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Gesture } from 'react-native-gesture-handler'
 import { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import { PKCanvas, PKCanvasRef } from '../lib/native/PKCanvas'
 import { colors } from '../theme'
+import { multiUserDrawingService, DrawingSession, User } from '../lib/services/MultiUserDrawing'
 
 type Tool = 'pencil' | 'pen' | 'marker' | 'fountainPen' | 'eraserVector' | 'eraserBitmap'
 type BrushSizeKey = 'thin' | 'medium' | 'thick'
@@ -70,7 +71,50 @@ export default function NotebookCanvasV2() {
     const [isSaving, setIsSaving] = useState(false)
     const [toolbarVisible, setToolbarVisible] = useState(true)
     
+    // Multi-user state
+    const [currentSession, setCurrentSession] = useState<DrawingSession | null>(null)
+    const [currentUser, setCurrentUser] = useState<User | null>(null)
+    const [isMyTurn, setIsMyTurn] = useState(true)
+    const [showUserModal, setShowUserModal] = useState(false)
+    
     const wheelRotation = useSharedValue(0)
+    
+    // Initialize multi-user session on component mount
+    useEffect(() => {
+        const initializeSession = () => {
+            const session = multiUserDrawingService.getCurrentSession()
+            const user = multiUserDrawingService.getCurrentUser()
+            
+            if (session && user) {
+                setCurrentSession(session)
+                setCurrentUser(user)
+                setIsMyTurn(multiUserDrawingService.isMyTurn())
+                
+                // Load existing drawing data if available
+                if (session.drawingData && canvasRef.current) {
+                    canvasRef.current.loadDrawingData(session.drawingData)
+                }
+            } else {
+                // No session - redirect to setup or create solo session
+                setShowUserModal(true)
+            }
+        }
+        
+        initializeSession()
+        
+        // Subscribe to session updates
+        const unsubscribe = multiUserDrawingService.subscribe((updatedSession) => {
+            setCurrentSession(updatedSession)
+            setIsMyTurn(multiUserDrawingService.isMyTurn())
+            
+            // Load updated drawing data
+            if (updatedSession.drawingData && canvasRef.current) {
+                canvasRef.current.loadDrawingData(updatedSession.drawingData)
+            }
+        })
+        
+        return unsubscribe
+    }, [])
     
     if (Platform.OS !== 'ios') {
         return (
@@ -218,6 +262,61 @@ export default function NotebookCanvasV2() {
         }
     }
 
+    // Multi-user drawing event handlers
+    const handleDrawingEnd = async () => {
+        if (!currentSession) return
+        
+        try {
+            // Export current drawing data and save to session
+            const drawingData = await canvasRef.current?.exportDrawingData()
+            if (drawingData) {
+                await multiUserDrawingService.saveDrawingData(drawingData)
+            }
+        } catch (error) {
+            console.error('Failed to save drawing data:', error)
+        }
+    }
+
+    const handleEndTurn = async () => {
+        if (!isMyTurn || !currentSession) return
+        
+        try {
+            // Save current drawing state
+            const drawingData = await canvasRef.current?.exportDrawingData()
+            if (drawingData) {
+                await multiUserDrawingService.saveDrawingData(drawingData)
+            }
+            
+            // End turn
+            await multiUserDrawingService.endTurn()
+            
+            Alert.alert('Turn Ended', 'Your turn has ended. Wait for the next player.')
+        } catch (error) {
+            console.error('Failed to end turn:', error)
+            Alert.alert('Error', 'Failed to end turn. Please try again.')
+        }
+    }
+
+    const handleSetupMultiUser = () => {
+        setShowUserModal(false)
+        router.push('/multi-user-setup')
+    }
+
+    const handleCreateSoloSession = async () => {
+        try {
+            const user = {
+                id: multiUserDrawingService.generateUserId(),
+                name: 'You',
+                color: '#274c77'
+            }
+            
+            await multiUserDrawingService.createSession(user)
+            setShowUserModal(false)
+        } catch (error) {
+            Alert.alert('Error', 'Failed to create session. Please try again.')
+        }
+    }
+
 
 
 
@@ -279,11 +378,50 @@ export default function NotebookCanvasV2() {
                     <Text style={styles.minHeaderText}>Back</Text>
                 </TouchableOpacity>
                 <View style={{ flex: 1 }} />
+                {currentSession && currentSession.users.length > 1 && (
+                    <TouchableOpacity style={styles.minHeaderBtn} onPress={handleEndTurn} disabled={!isMyTurn}>
+                        <Feather name='users' size={18} color={isMyTurn ? colors.ink : colors.inkSoft} />
+                        <Text style={[styles.minHeaderText, !isMyTurn && styles.disabled]}>
+                            {isMyTurn ? 'End Turn' : 'Wait'}
+                        </Text>
+                    </TouchableOpacity>
+                )}
                 <TouchableOpacity style={[styles.minHeaderBtn, isSaving && styles.disabled]} onPress={saveToCamera} disabled={isSaving}>
                     <Feather name='download' size={18} color={isSaving ? colors.inkSoft : colors.ink} />
                     <Text style={styles.minHeaderText}>{isSaving ? 'Saving…' : 'Save'}</Text>
                 </TouchableOpacity>
             </View>
+
+            {/* Multi-user Status Bar */}
+            {currentSession && currentSession.users.length > 1 && (
+                <View style={styles.statusBar}>
+                    <View style={styles.statusContent}>
+                        <View style={styles.userList}>
+                            {currentSession.users.map((user, index) => (
+                                <View key={user.id} style={styles.userIndicator}>
+                                    <View 
+                                        style={[
+                                            styles.userDot, 
+                                            { backgroundColor: user.color },
+                                            currentSession.currentTurn === user.id && styles.activeDot
+                                        ]} 
+                                    />
+                                    <Text style={[
+                                        styles.userName,
+                                        currentSession.currentTurn === user.id && styles.activeUserName
+                                    ]}>
+                                        {user.name}
+                                        {user.id === currentUser?.id && ' (You)'}
+                                    </Text>
+                                </View>
+                            ))}
+                        </View>
+                        <Text style={styles.turnStatus}>
+                            {isMyTurn ? "Your turn! 🎨" : "Waiting for turn..."}
+                        </Text>
+                    </View>
+                </View>
+            )}
 
             {/* Spiral binding */}
             <View style={styles.spiralBinding}>
@@ -299,9 +437,17 @@ export default function NotebookCanvasV2() {
                     color={selectedColor}
                     lineWidth={BRUSH_SIZES[selectedBrushSize]}
                     fingerEnabled={true}
-                    onBegin={() => {}}
+                    onBegin={() => {
+                        if (!isMyTurn && currentSession && currentSession.users.length > 1) {
+                            Alert.alert('Not Your Turn', 'Wait for your turn to draw!')
+                        }
+                    }}
                     onChange={() => {}}
-                    onEnd={() => {}}
+                    onEnd={() => {
+                        if (isMyTurn) {
+                            handleDrawingEnd()
+                        }
+                    }}
                 />
 
                 {/* Notebook lines overlay */}
@@ -418,6 +564,42 @@ export default function NotebookCanvasV2() {
                     </Pressable>
                 </Pressable>
             </Modal>
+
+            {/* User Setup Modal */}
+            <Modal
+                visible={showUserModal}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => {}}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.clearModal}>
+                        <Text style={styles.modalTitle}>Drawing Session</Text>
+                        
+                        <View style={styles.modalSection}>
+                            <Text style={styles.modalText}>
+                                Choose how you'd like to use the drawing canvas:
+                            </Text>
+                        </View>
+
+                        <View style={styles.modalButtons}>
+                            <TouchableOpacity 
+                                style={[styles.modalButton, styles.cancelButton]}
+                                onPress={handleCreateSoloSession}
+                            >
+                                <Text style={styles.cancelButtonText}>Draw Solo</Text>
+                            </TouchableOpacity>
+                            
+                            <TouchableOpacity 
+                                style={[styles.modalButton, styles.confirmButton]}
+                                onPress={handleSetupMultiUser}
+                            >
+                                <Text style={styles.confirmButtonText}>Multi-User</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     )
 }
@@ -452,6 +634,58 @@ const styles = StyleSheet.create({
         color: colors.ink
     },
     disabled: { opacity: 0.5 },
+
+    /* Multi-user status bar */
+    statusBar: {
+        backgroundColor: '#f5f3ef',
+        borderBottomWidth: 1,
+        borderBottomColor: colors.stroke,
+        paddingHorizontal: 16,
+        paddingVertical: 8
+    },
+    statusContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    userList: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12
+    },
+    userIndicator: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4
+    },
+    userDot: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        borderWidth: 1,
+        borderColor: colors.stroke
+    },
+    activeDot: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        borderWidth: 2,
+        borderColor: colors.ink
+    },
+    userName: {
+        fontSize: 12,
+        color: colors.inkSoft,
+        fontWeight: '500'
+    },
+    activeUserName: {
+        color: colors.ink,
+        fontWeight: '600'
+    },
+    turnStatus: {
+        fontSize: 12,
+        color: colors.ink,
+        fontWeight: '600'
+    },
     header: {
         flexDirection: 'row',
         alignItems: 'center',

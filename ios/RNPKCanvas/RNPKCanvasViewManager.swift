@@ -110,4 +110,27 @@ class RNPKCanvasViewManager: RCTViewManager {
             }
         }
     }
+
+    @objc func exportDrawingData(_ reactTag: NSNumber,
+                                resolver resolve: @escaping RCTPromiseResolveBlock,
+                                rejecter reject: @escaping RCTPromiseRejectBlock) {
+        bridge.uiManager.addUIBlock { ui, views in
+            guard let pk = self.resolvePKView(reactTag: reactTag, uiManager: ui, viewRegistry: views) else {
+                reject("E_EXPORT", "View not found", nil)
+                return
+            }
+            if let data = pk.exportDrawingData() {
+                resolve(data)
+            } else {
+                reject("E_EXPORT", "Failed to export drawing data", nil)
+            }
+        }
+    }
+
+    @objc func loadDrawingData(_ reactTag: NSNumber, data: NSString) {
+        bridge.uiManager.addUIBlock { ui, views in
+            self.resolvePKView(reactTag: reactTag, uiManager: ui, viewRegistry: views)?
+                .loadDrawingData(data as String)
+        }
+    }
 }

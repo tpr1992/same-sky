@@ -25,6 +25,8 @@ export type PKCanvasRef = {
   setDrawingPolicy(policy: 'any' | 'pencilOnly'): void
   exportBase64(): Promise<string>
   exportBase64Snapshot(): Promise<string>
+  exportDrawingData(): Promise<string>
+  loadDrawingData(data: string): void
   testBridge(): void
 }
 
@@ -64,6 +66,8 @@ export const PKCanvas = forwardRef<PKCanvasRef, Props>((props, ref) => {
     setDrawingPolicy: p => call('setDrawingPolicy', [p === 'pencilOnly' ? 'pencilOnly' : 'any']),
     exportBase64: () => callPromise('exportBase64'),
     exportBase64Snapshot: () => callPromise('exportBase64Snapshot'),
+    exportDrawingData: () => callPromise('exportDrawingData'),
+    loadDrawingData: data => call('loadDrawingData', [data]),
     testBridge: () => call('testBridge') // will no-op with a warning if not exposed natively
   }))
 
