@@ -8,7 +8,7 @@ import { colors } from '../theme'
 const roomImage = require('../assets/images/room-sketch.png')
 
 // left/top/width/height are all 0..1 percentages relative to the image content
-type Hotspot = { id: 'notebook' | 'window' | 'lamp' | 'calendar' | 'clock' | 'exit', x: number, y: number, w: number, h: number, label: string }
+type Hotspot = { id: 'notebook' | 'window' | 'lamp' | 'calendar' | 'clock' | 'exit' | 'debug', x: number, y: number, w: number, h: number, label: string }
 
 // Initial guesses tuned to your sketch; tweak with debug overlay if needed
 const HOTSPOTS: Hotspot[] = [
@@ -23,7 +23,9 @@ const HOTSPOTS: Hotspot[] = [
     // Clock on bedside table (left side)
     { id: 'clock',    label: 'Clock',    x: 0.04, y: 0.25, w: 0.10, h: 0.10 },
     // Exit - hidden hotspot to return to app landing page
-    { id: 'exit',    label: 'Exit',    x: 0.04, y: 0.9, w: 0.10, h: 0.10 }
+    { id: 'exit',    label: 'Exit',    x: 0.04, y: 0.9, w: 0.10, h: 0.10 },
+    // Debug - hidden hotspot for multi-user testing
+    { id: 'debug',   label: 'Debug',   x: 0.85, y: 0.9, w: 0.10, h: 0.10 }
 
 ]
 
@@ -158,6 +160,9 @@ export default function Room() {
         if (id === 'clock')    setShowTimeModal(true)
         if (id === 'exit') {
             setShowLogoutModal(true)
+        }
+        if (id === 'debug') {
+            router.push('/debug-multi-user')
         }
     }
 
