@@ -37,6 +37,3 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
-
-# AI/LLM documentation
-CLAUDE.md
