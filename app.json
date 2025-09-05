@@ -11,7 +11,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.same-sky-poc",
-      "deploymentTarget": "13.0"
+      "deploymentTarget": "13.0",
+      "infoPlist": {
+        "NSPhotoLibraryAddUsageDescription": "We save your drawings to Photos.",
+        "NSPhotoLibraryUsageDescription": "We access your photo library to save drawings."
+      }
     },
     "android": {
       "adaptiveIcon": {

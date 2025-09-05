@@ -7,13 +7,4 @@
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:RNPKCanvas/RNPKCanvasView.swift">
-   </FileRef>
-   <FileRef
-      location = "group:RNPKCanvas/RNPKCanvasViewManager.m">
-   </FileRef>
-   <FileRef
-      location = "group:RNPKCanvas/RNPKCanvasViewManager.swift">
-   </FileRef>
 </Workspace>

@@ -9,30 +9,30 @@
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		4AD932E243365DACD05A1DBE /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0172C9CEA35B6FD4D5DD575E /* PrivacyInfo.xcprivacy */; };
-		72D9D048A03C9A7BF0967728 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6285D45760860FC2C191750F /* ExpoModulesProvider.swift */; };
-		8ED3FED8190F0A79A85662F5 /* libPods-sameskypoc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 921F56D5A98272D6D4CEE3C1 /* libPods-sameskypoc.a */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		C1466D742E5E42AD000E5EB3 /* RNPKCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1466D712E5E42AD000E5EB3 /* RNPKCanvasView.swift */; };
-		C1466D752E5E42AD000E5EB3 /* RNPKCanvasViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C1466D722E5E42AD000E5EB3 /* RNPKCanvasViewManager.m */; };
-		C1466D762E5E42AD000E5EB3 /* RNPKCanvasViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1466D732E5E42AD000E5EB3 /* RNPKCanvasViewManager.swift */; };
+		C1466D872E5F9217000E5EB3 /* RNPKCanvasViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C1466D842E5F9216000E5EB3 /* RNPKCanvasViewManager.m */; };
+		C1466D882E5F9217000E5EB3 /* RNPKCanvasViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1466D852E5F9216000E5EB3 /* RNPKCanvasViewManager.swift */; };
+		C1466D892E5F9217000E5EB3 /* RNPKCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1466D862E5F9217000E5EB3 /* RNPKCanvasView.swift */; };
+		C4BB0BDE46862BD5C453DB76 /* libPods-sameskypoc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CD91C815F0462D7A073565E /* libPods-sameskypoc.a */; };
+		DE395946A3EC77A0823F149D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D336E504956042AB0E02D480 /* PrivacyInfo.xcprivacy */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
+		FB99083DB78C4A21C8B95025 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9750AA4E0BE6784DC987B2 /* ExpoModulesProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0172C9CEA35B6FD4D5DD575E /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = sameskypoc/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* sameskypoc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sameskypoc.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = sameskypoc/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = sameskypoc/Info.plist; sourceTree = "<group>"; };
-		6285D45760860FC2C191750F /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-sameskypoc/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		6BCC3141FDB60DF1B05A75F0 /* Pods-sameskypoc.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sameskypoc.release.xcconfig"; path = "Target Support Files/Pods-sameskypoc/Pods-sameskypoc.release.xcconfig"; sourceTree = "<group>"; };
-		72EA489C807C89DDABE3CEED /* Pods-sameskypoc.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sameskypoc.debug.xcconfig"; path = "Target Support Files/Pods-sameskypoc/Pods-sameskypoc.debug.xcconfig"; sourceTree = "<group>"; };
-		921F56D5A98272D6D4CEE3C1 /* libPods-sameskypoc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-sameskypoc.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B9750AA4E0BE6784DC987B2 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-sameskypoc/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		81F87DB3F94FDBC73FD0B63B /* Pods-sameskypoc.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sameskypoc.release.xcconfig"; path = "Target Support Files/Pods-sameskypoc/Pods-sameskypoc.release.xcconfig"; sourceTree = "<group>"; };
+		8CD91C815F0462D7A073565E /* libPods-sameskypoc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-sameskypoc.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = sameskypoc/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		C1466D712E5E42AD000E5EB3 /* RNPKCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RNPKCanvasView.swift; path = RNPKCanvas/RNPKCanvasView.swift; sourceTree = "<group>"; };
-		C1466D722E5E42AD000E5EB3 /* RNPKCanvasViewManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RNPKCanvasViewManager.m; path = RNPKCanvas/RNPKCanvasViewManager.m; sourceTree = "<group>"; };
-		C1466D732E5E42AD000E5EB3 /* RNPKCanvasViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RNPKCanvasViewManager.swift; path = RNPKCanvas/RNPKCanvasViewManager.swift; sourceTree = "<group>"; };
+		C1466D842E5F9216000E5EB3 /* RNPKCanvasViewManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RNPKCanvasViewManager.m; path = RNPKCanvas/RNPKCanvasViewManager.m; sourceTree = "<group>"; };
+		C1466D852E5F9216000E5EB3 /* RNPKCanvasViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RNPKCanvasViewManager.swift; path = RNPKCanvas/RNPKCanvasViewManager.swift; sourceTree = "<group>"; };
+		C1466D862E5F9217000E5EB3 /* RNPKCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RNPKCanvasView.swift; path = RNPKCanvas/RNPKCanvasView.swift; sourceTree = "<group>"; };
+		CCD84370BF2D34780BAD6479 /* Pods-sameskypoc.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sameskypoc.debug.xcconfig"; path = "Target Support Files/Pods-sameskypoc/Pods-sameskypoc.debug.xcconfig"; sourceTree = "<group>"; };
+		D336E504956042AB0E02D480 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = sameskypoc/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = sameskypoc/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* sameskypoc-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "sameskypoc-Bridging-Header.h"; path = "sameskypoc/sameskypoc-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -43,7 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8ED3FED8190F0A79A85662F5 /* libPods-sameskypoc.a in Frameworks */,
+				C4BB0BDE46862BD5C453DB76 /* libPods-sameskypoc.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,26 +59,35 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				0172C9CEA35B6FD4D5DD575E /* PrivacyInfo.xcprivacy */,
+				D336E504956042AB0E02D480 /* PrivacyInfo.xcprivacy */,
 			);
 			name = sameskypoc;
+			sourceTree = "<group>";
+		};
+		257394C49B8EFB5BE78C2ECD /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				CC501B459E6FD206AD7D460F /* sameskypoc */,
+			);
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				921F56D5A98272D6D4CEE3C1 /* libPods-sameskypoc.a */,
+				8CD91C815F0462D7A073565E /* libPods-sameskypoc.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		7560F3107D074C1B91F2952D /* sameskypoc */ = {
+		6ACD3F30ED9EE944F9EA353D /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				6285D45760860FC2C191750F /* ExpoModulesProvider.swift */,
+				CCD84370BF2D34780BAD6479 /* Pods-sameskypoc.debug.xcconfig */,
+				81F87DB3F94FDBC73FD0B63B /* Pods-sameskypoc.release.xcconfig */,
 			);
-			name = sameskypoc;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -91,15 +100,15 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				C1466D712E5E42AD000E5EB3 /* RNPKCanvasView.swift */,
-				C1466D722E5E42AD000E5EB3 /* RNPKCanvasViewManager.m */,
-				C1466D732E5E42AD000E5EB3 /* RNPKCanvasViewManager.swift */,
+				C1466D862E5F9217000E5EB3 /* RNPKCanvasView.swift */,
+				C1466D842E5F9216000E5EB3 /* RNPKCanvasViewManager.m */,
+				C1466D852E5F9216000E5EB3 /* RNPKCanvasViewManager.swift */,
 				13B07FAE1A68108700A75B9A /* sameskypoc */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				F4748655D89DFF874D75E5E3 /* Pods */,
-				E5F6525A3C64CA639D04960C /* ExpoModulesProviders */,
+				6ACD3F30ED9EE944F9EA353D /* Pods */,
+				257394C49B8EFB5BE78C2ECD /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -123,21 +132,12 @@
 			path = sameskypoc/Supporting;
 			sourceTree = "<group>";
 		};
-		E5F6525A3C64CA639D04960C /* ExpoModulesProviders */ = {
+		CC501B459E6FD206AD7D460F /* sameskypoc */ = {
 			isa = PBXGroup;
 			children = (
-				7560F3107D074C1B91F2952D /* sameskypoc */,
+				7B9750AA4E0BE6784DC987B2 /* ExpoModulesProvider.swift */,
 			);
-			name = ExpoModulesProviders;
-			sourceTree = "<group>";
-		};
-		F4748655D89DFF874D75E5E3 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				72EA489C807C89DDABE3CEED /* Pods-sameskypoc.debug.xcconfig */,
-				6BCC3141FDB60DF1B05A75F0 /* Pods-sameskypoc.release.xcconfig */,
-			);
-			path = Pods;
+			name = sameskypoc;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -148,13 +148,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "sameskypoc" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				2C97180CB9AD47C2A3B2FCA8 /* [Expo] Configure project */,
+				0FB2EA180ED69AEAC601E957 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				448E4BA0506889FC8227C140 /* [CP] Embed Pods Frameworks */,
+				07F6D25F674B4C002354DDA8 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -174,7 +174,9 @@
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = 7DR5SPLC9Z;
 						LastSwiftMigration = 1250;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -204,7 +206,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				4AD932E243365DACD05A1DBE /* PrivacyInfo.xcprivacy in Resources */,
+				DE395946A3EC77A0823F149D /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,6 +227,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT=\"$PROJECT_DIR\"/..\n\nif [[ \"$CONFIGURATION\" = *Debug* ]]; then\n  export SKIP_BUNDLING=1\nfi\nif [[ -z \"$ENTRY_FILE\" ]]; then\n  # Set the entry JS file using the bundler's entry resolution.\n  export ENTRY_FILE=\"$(\"$NODE_BINARY\" -e \"require('expo/scripts/resolveAppEntry')\" \"$PROJECT_ROOT\" ios absolute | tail -n 1)\"\nfi\n\nif [[ -z \"$CLI_PATH\" ]]; then\n  # Use Expo CLI\n  export CLI_PATH=\"$(\"$NODE_BINARY\" --print \"require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })\")\"\nfi\nif [[ -z \"$BUNDLE_COMMAND\" ]]; then\n  # Default Expo CLI command for bundling\n  export BUNDLE_COMMAND=\"export:embed\"\nfi\n\n# Source .xcode.env.updates if it exists to allow\n# SKIP_BUNDLING to be unset if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.updates\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.updates\"\nfi\n# Source local changes to allow overrides\n# if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n`\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\"`\n\n";
+		};
+		07F6D25F674B4C002354DDA8 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-sameskypoc/Pods-sameskypoc-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-sameskypoc/Pods-sameskypoc-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -248,7 +268,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		2C97180CB9AD47C2A3B2FCA8 /* [Expo] Configure project */ = {
+		0FB2EA180ED69AEAC601E957 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -266,24 +286,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-sameskypoc/expo-configure-project.sh\"\n";
-		};
-		448E4BA0506889FC8227C140 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-sameskypoc/Pods-sameskypoc-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-sameskypoc/Pods-sameskypoc-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -376,11 +378,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C1466D742E5E42AD000E5EB3 /* RNPKCanvasView.swift in Sources */,
-				C1466D752E5E42AD000E5EB3 /* RNPKCanvasViewManager.m in Sources */,
-				C1466D762E5E42AD000E5EB3 /* RNPKCanvasViewManager.swift in Sources */,
+				C1466D872E5F9217000E5EB3 /* RNPKCanvasViewManager.m in Sources */,
+				C1466D882E5F9217000E5EB3 /* RNPKCanvasViewManager.swift in Sources */,
+				C1466D892E5F9217000E5EB3 /* RNPKCanvasView.swift in Sources */,
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				72D9D048A03C9A7BF0967728 /* ExpoModulesProvider.swift in Sources */,
+				FB99083DB78C4A21C8B95025 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -389,12 +391,15 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 72EA489C807C89DDABE3CEED /* Pods-sameskypoc.debug.xcconfig */;
+			baseConfigurationReference = CCD84370BF2D34780BAD6479 /* Pods-sameskypoc.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = sameskypoc/sameskypoc.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7DR5SPLC9Z;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -425,12 +430,15 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6BCC3141FDB60DF1B05A75F0 /* Pods-sameskypoc.release.xcconfig */;
+			baseConfigurationReference = 81F87DB3F94FDBC73FD0B63B /* Pods-sameskypoc.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = sameskypoc/sameskypoc.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7DR5SPLC9Z;
 				INFOPLIST_FILE = sameskypoc/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (

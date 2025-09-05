@@ -1,15 +1,14 @@
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons'
-import { LinearGradient } from 'expo-linear-gradient'
+import { Feather } from '@expo/vector-icons'
 import * as MediaLibrary from 'expo-media-library'
 import { useRouter } from 'expo-router'
 import React, { useRef, useState } from 'react'
 import { Alert, Modal, Platform, Pressable, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { Gesture, GestureDetector } from 'react-native-gesture-handler'
-import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
+import { Gesture } from 'react-native-gesture-handler'
+import { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import { PKCanvas, PKCanvasRef } from '../lib/native/PKCanvas'
 import { colors } from '../theme'
 
-type Tool = 'pencil' | 'pen' | 'marker' | 'eraserVector' | 'eraserBitmap'
+type Tool = 'pencil' | 'pen' | 'marker' | 'fountainPen' | 'eraserVector' | 'eraserBitmap'
 type BrushSizeKey = 'thin' | 'medium' | 'thick'
 
 const BRUSH_SIZES: Record<BrushSizeKey, number> = {
@@ -19,29 +18,47 @@ const BRUSH_SIZES: Record<BrushSizeKey, number> = {
 }
 
 const DRAW_COLORS = [
-    '#2B2B2B', // Charcoal black
-    '#4A4A4A', // Dark gray
-    '#8B4513', // Saddle brown
-    '#654321', // Dark brown
-    '#B22222', // Fire brick red
-    '#DC143C', // Crimson
-    '#FF6347', // Tomato
-    '#FF8C00', // Dark orange
-    '#DAA520', // Goldenrod
-    '#228B22', // Forest green
-    '#2E8B57', // Sea green
-    '#4682B4', // Steel blue
-    '#483D8B', // Dark slate blue
-    '#8B008B', // Dark magenta
-    '#9932CC', // Dark orchid
-    colors.ink,  // Keep the original ink color
+    '#2B2B2B',
+    '#4A4A4A',
+    '#8B4513',
+    '#654321',
+    '#B22222',
+    '#DC143C',
+    '#FF6347',
+    '#FF8C00',
+    '#DAA520',
+    '#228B22',
+    '#2E8B57',
+    '#4682B4',
+    '#483D8B',
+    '#8B008B',
+    '#9932CC',
+    colors.ink,
 ]
+
+const INK_COLOR: Record<Tool, string> = {
+    pen: '#0B0F1A',
+    fountainPen: '#0E0E12',
+    marker: '#FFF200',
+    pencil: '#2D2D2D',
+    eraserVector: '#000000',
+    eraserBitmap: '#000000'
+}
+
+const DEFAULT_WIDTH_BY_TOOL: Record<Tool, 'thin'|'medium'|'thick'> = {
+    pen: 'thin',
+    fountainPen: 'medium',
+    pencil: 'medium',
+    marker: 'thick',
+    eraserVector: 'medium',
+    eraserBitmap: 'medium'
+}
 
 export default function NotebookCanvasV2() {
     const router = useRouter()
     const canvasRef = useRef<PKCanvasRef>(null)
-    
-    const [selectedColor, setSelectedColor] = useState(colors.ink)
+
+    const [selectedColor, setSelectedColor] = useState(INK_COLOR['pencil'])
     const [selectedBrushSize, setSelectedBrushSize] = useState<BrushSizeKey>('medium')
     const [selectedTool, setSelectedTool] = useState<Tool>('pencil')
     const [isErasing, setIsErasing] = useState(false)
@@ -53,13 +70,12 @@ export default function NotebookCanvasV2() {
     const [isSaving, setIsSaving] = useState(false)
     const [toolbarVisible, setToolbarVisible] = useState(true)
     
-    // Color wheel rotation
     const wheelRotation = useSharedValue(0)
     
-    // For iOS only
     if (Platform.OS !== 'ios') {
         return (
             <SafeAreaView style={styles.container}>
+                {/* Header — HIDDEN ON iOS */}
                 <View style={styles.header}>
                     <TouchableOpacity style={styles.backButton} onPress={() => router.push('/room')}>
                         <Text style={styles.backArrow}>←</Text>
@@ -71,7 +87,7 @@ export default function NotebookCanvasV2() {
                     <Text style={styles.notSupportedText}>
                         PencilKit is only available on iOS devices.
                     </Text>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         style={styles.fallbackButton}
                         onPress={() => router.push('/notebook-canvas')}
                     >
@@ -87,6 +103,24 @@ export default function NotebookCanvasV2() {
         return selectedTool
     }
 
+    const handleToolChange = (newTool: Tool) => {
+        setSelectedTool(newTool)
+        if (newTool === 'marker') {
+            setSelectedColor(INK_COLOR.marker)
+            setSelectedBrushSize('thick')
+        } else if (newTool === 'fountainPen') {
+            setSelectedColor(INK_COLOR.fountainPen)
+            setSelectedBrushSize('medium')
+        } else if (newTool === 'pen') {
+            setSelectedColor(INK_COLOR.pen)
+            setSelectedBrushSize('thin')
+        } else {
+            setSelectedColor(INK_COLOR.pencil)
+            setSelectedBrushSize('medium')
+        }
+        if (isErasing) setIsErasing(false)
+    }
+
     const getToolInfo = (tool: Tool) => {
         switch (tool) {
             case 'pencil':
@@ -95,12 +129,14 @@ export default function NotebookCanvasV2() {
                 return { name: 'Pen', icon: 'pen' }
             case 'marker':
                 return { name: 'Marker', icon: 'marker' }
+            case 'fountainPen':
+                return { name: 'Fountain Pen', icon: 'feather' }
             default:
                 return { name: 'Pencil', icon: 'pencil' }
         }
     }
 
-    const availableTools: Tool[] = ['pencil', 'pen', 'marker']
+    const availableTools: Tool[] = ['pencil', 'pen', 'marker', 'fountainPen']
     const availableBrushSizes: BrushSizeKey[] = ['thin', 'medium', 'thick']
 
     const getBrushSizeInfo = (size: BrushSizeKey) => {
@@ -131,78 +167,80 @@ export default function NotebookCanvasV2() {
         canvasRef.current?.redo()
     }
 
+    const testBridge = () => {
+        console.log('Testing bridge')
+    }
+
     const saveToCamera = async () => {
         if (isSaving) return
-        
+
         setIsSaving(true)
         try {
-            // Request permission to save to photo library
-            const { status } = await MediaLibrary.requestPermissionsAsync()
-            if (status !== 'granted') {
-                Alert.alert('Permission Required', 'Please allow access to your photo library to save drawings.')
+            // Photos permission: accept granted or limited
+            let perm = await MediaLibrary.getPermissionsAsync()
+            if (!(perm.granted || perm.accessPrivileges === 'limited')) {
+                perm = await MediaLibrary.requestPermissionsAsync()
+            }
+            if (!(perm.granted || perm.accessPrivileges === 'limited')) {
+                Alert.alert('Permission Required', 'Please allow access to your photo library to save drawings')
                 return
             }
 
-            // Export drawing as base64 PNG
-            const base64 = await canvasRef.current?.exportBase64()
-            if (!base64) {
-                Alert.alert('Error', 'Could not export drawing. Please try again.')
+            // Let layout settle just in case
+            await new Promise(r => setTimeout(r, 0))
+
+            // Try native PK export first
+            let base64 = await canvasRef.current?.exportBase64()
+            if (!base64 || base64.length < 10) {
+                console.warn('exportBase64 returned empty, trying snapshot fallback')
+                base64 = await canvasRef.current?.exportBase64Snapshot()
+            }
+            if (!base64 || base64.length < 10) {
+                Alert.alert('Nothing to save', 'The page looks empty or export failed')
                 return
             }
 
-            // Create temporary file with base64 data
-            const { FileSystem } = await import('expo-file-system')
+            const FileSystem = await import('expo-file-system')
             const filename = `drawing-${Date.now()}.png`
             const fileUri = `${FileSystem.documentDirectory}${filename}`
-            
-            // Write the base64 data to a file
             await FileSystem.writeAsStringAsync(fileUri, base64, {
-                encoding: FileSystem.EncodingType.Base64,
+                encoding: FileSystem.EncodingType.Base64
             })
-            
-            // Save to camera roll
-            await MediaLibrary.saveToLibraryAsync(fileUri)
-            
-            // Clean up the temporary file
+
+            await MediaLibrary.createAssetAsync(fileUri)
             await FileSystem.deleteAsync(fileUri, { idempotent: true })
-            
-            // Success feedback
             setShowSaveModal(true)
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error saving to camera roll:', error)
-            Alert.alert('Error', 'Failed to save drawing. Please try again.')
+            Alert.alert('Error', error?.message ?? 'Failed to save drawing. Please try again.')
         } finally {
             setIsSaving(false)
         }
     }
 
-    // Animated style for color wheel rotation
+
+
+
     const wheelAnimatedStyle = useAnimatedStyle(() => ({
         transform: [{ rotate: `${wheelRotation.value}deg` }]
     }))
 
-    // Auto-select color based on wheel position
     const updateSelectedColorFromWheel = (rotation: number) => {
         const baseColors = [
             '#FF0000','#FF4500','#FFD700','#32CD32','#00BFFF',
-            '#9400D3','#FF1493','#8B4513','#2F2F2F', colors.ink
-        ];
-        
-        // Use even spacing for color selection
-        const degreesPerColor = 360 / baseColors.length;
-
-        const offset = 90; // 12 o'clock -> 0, right edge is 0 degrees in our viewport
-        const normalized = (((rotation + offset) % 360) + 360) % 360; // 0..360
-        const idx = Math.round(normalized / degreesPerColor) % baseColors.length;
-
-        const targetColor = baseColors[idx];
+            '#9400D3','#FF1493','#8B4513','#2F2F2F','#000000', colors.ink
+        ]
+        const degreesPerColor = 360 / baseColors.length
+        const offset = 90
+        const normalized = (((rotation + offset) % 360) + 360) % 360
+        const idx = Math.round(normalized / degreesPerColor) % baseColors.length
+        const targetColor = baseColors[idx]
         if (targetColor && targetColor !== selectedColor) {
-            setSelectedColor(targetColor);
-            setIsErasing(false);
+            setSelectedColor(targetColor)
+            setIsErasing(false)
         }
     }
 
-    // Color wheel gesture handler
     const colorWheelGesture = Gesture.Pan()
         .runOnJS(true)
         .onUpdate((event) => {
@@ -219,35 +257,32 @@ export default function NotebookCanvasV2() {
     return (
         <SafeAreaView style={styles.container}>
             {/* Header */}
-            <View style={styles.header}>
+            {/* <View style={styles.header}>
                 <TouchableOpacity style={styles.backButton} onPress={() => router.push('/room')}>
                     <Text style={styles.backArrow}>←</Text>
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Notebook</Text>
                 <View style={styles.headerButtons}>
-                    <TouchableOpacity 
-                        style={styles.headerButton} 
-                        onPress={undo}
-                    >
-                        <Feather name='rotate-ccw' size={20} color={colors.ink} />
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                        style={styles.headerButton} 
-                        onPress={redo}
-                    >
-                        <Feather name='rotate-cw' size={20} color={colors.ink} />
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                        style={[styles.headerButton, isSaving && styles.disabledButton]} 
-                        onPress={saveToCamera}
-                        disabled={isSaving}
-                    >
-                        <Feather name={isSaving ? 'download' : 'download'} size={20} color={isSaving ? colors.inkSoft : colors.ink} />
+                    <TouchableOpacity style={[styles.headerButton, isSaving && styles.disabledButton]} onPress={saveToCamera} disabled={isSaving}>
+                        <Feather name='download' size={20} color={isSaving ? colors.inkSoft : colors.ink} />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.headerButton} onPress={clearCanvas}>
                         <Feather name='trash-2' size={20} color={colors.inkSoft} />
                     </TouchableOpacity>
                 </View>
+            </View> */}
+
+            {/* Header v2 */}
+            <View style={styles.minHeader}>
+                <TouchableOpacity style={styles.minHeaderBtn} onPress={() => router.push('/room')}>
+                    <Feather name='arrow-left' size={18} color={colors.ink} />
+                    <Text style={styles.minHeaderText}>Back</Text>
+                </TouchableOpacity>
+                <View style={{ flex: 1 }} />
+                <TouchableOpacity style={[styles.minHeaderBtn, isSaving && styles.disabled]} onPress={saveToCamera} disabled={isSaving}>
+                    <Feather name='download' size={18} color={isSaving ? colors.inkSoft : colors.ink} />
+                    <Text style={styles.minHeaderText}>{isSaving ? 'Saving…' : 'Save'}</Text>
+                </TouchableOpacity>
             </View>
 
             {/* Spiral binding */}
@@ -275,7 +310,7 @@ export default function NotebookCanvasV2() {
                 </View>
             </View>
 
-            {/* Toolbar Toggle (when toolbar is visible) */}
+            {/* Toolbar Toggle — HIDDEN
             {toolbarVisible && (
                 <View style={styles.toolbarToggleContainer}>
                     <TouchableOpacity 
@@ -286,265 +321,23 @@ export default function NotebookCanvasV2() {
                     </TouchableOpacity>
                 </View>
             )}
+            */}
 
-            {/* Toolbar */}
+            {/* Bottom Toolbar — HIDDEN
             {toolbarVisible && (
                 <View style={styles.toolbar}>
-                    <View style={styles.colorSelectorContainer}>
-                        <TouchableOpacity 
-                            style={[styles.colorPreview, { backgroundColor: selectedColor }]}
-                            onPress={() => setShowColorWheel(!showColorWheel)}
-                        />
-                        
-                        {/* Rotatable color wheel with target (right semicircle only) */}
-                        {showColorWheel && (
-                            <>
-                                <TouchableOpacity
-                                    style={styles.colorWheelBackdrop}
-                                    activeOpacity={1}
-                                    onPress={() => setShowColorWheel(false)}
-                                />
-
-                                {/* Viewport shows ONLY the right half */}
-                                <View style={styles.wheelViewport}>
-                                    <GestureDetector gesture={colorWheelGesture}>
-                                        <Animated.View style={[styles.wheel, wheelAnimatedStyle]}>
-                                            {(() => {
-                                                const baseColors = [
-                                                    '#FF0000','#FF4500','#FFD700','#32CD32','#00BFFF',
-                                                    '#9400D3','#FF1493','#8B4513','#2F2F2F', colors.ink
-                                                ];
-                                                const swatchSize = 28; // Reduced from 32 to prevent overlap
-                                                const padding = 8; // 8px spacing between swatches
-                                                const radius = 90; // Increased from 85 for more room
-                                                const arcLength = swatchSize + padding;
-                                                const anglePer = (arcLength / radius) * (180 / Math.PI); // degrees
-                                                
-                                                // Only create swatches for our base colors, repeated 3 times for smooth infinite scroll
-                                                const repetitions = 3;
-                                                const totalSwatches = baseColors.length * repetitions;
-
-                                                return Array.from({ length: totalSwatches }).map((_, i) => {
-                                                    const colorIndex = i % baseColors.length;
-                                                    // start at 12 o'clock and go clockwise around full circle
-                                                    const angle = -90 + (i * 360) / totalSwatches;
-                                                    const rad = (angle * Math.PI) / 180;
-                                                    const x = Math.cos(rad) * radius;
-                                                    const y = Math.sin(rad) * radius;
-
-                                                    const color = baseColors[colorIndex];
-                                                    return (
-                                                        <View
-                                                            key={`wheel-${i}`}
-                                                            style={[
-                                                                styles.curvedColorSwatch,
-                                                                {
-                                                                    backgroundColor: color,
-                                                                    transform: [{ translateX: x }, { translateY: y }],
-                                                                },
-                                                            ]}
-                                                        />
-                                                    );
-                                                });
-                                            })()}
-                                        </Animated.View>
-                                    </GestureDetector>
-
-                                    {/* Fades (overlay, non-interactive) */}
-                                    <LinearGradient
-                                        pointerEvents="none"
-                                        colors={['rgba(253, 252, 248, 1)', 'rgba(253, 252, 248, 0)']}
-                                        start={{ x: 0, y: 0 }}
-                                        end={{ x: 1, y: 0 }}
-                                        style={styles.fadeLeft}
-                                    />
-                                    <LinearGradient
-                                        pointerEvents="none"
-                                        colors={['rgba(253, 252, 248, 1)', 'rgba(253, 252, 248, 0)']}
-                                        start={{ x: 0, y: 0 }}
-                                        end={{ x: 0, y: 1 }}
-                                        style={styles.fadeTop}
-                                    />
-                                    <LinearGradient
-                                        pointerEvents="none"
-                                        colors={['rgba(253, 252, 248, 0)', 'rgba(253, 252, 248, 1)']}
-                                        start={{ x: 0, y: 0 }}
-                                        end={{ x: 0, y: 1 }}
-                                        style={styles.fadeBottom}
-                                    />
-
-                                    {/* Target dot centered on the right edge */}
-                                    <View style={styles.wheelTarget} />
-                                </View>
-                            </>
-                        )}
-                    </View>
-
-                    <View style={styles.toolDropdownContainer}>
-                        <TouchableOpacity 
-                            style={styles.toolDropdownButton}
-                            onPress={() => setShowToolDropdown(!showToolDropdown)}
-                        >
-                            <MaterialCommunityIcons 
-                                name={getToolInfo(selectedTool).icon as any} 
-                                size={18} 
-                                color={colors.ink} 
-                            />
-                            <Text style={styles.toolDropdownText} numberOfLines={1}>
-                                {getToolInfo(selectedTool).name}
-                            </Text>
-                            <Feather 
-                                name={showToolDropdown ? 'chevron-up' : 'chevron-down'} 
-                                size={14} 
-                                color={colors.ink} 
-                            />
-                        </TouchableOpacity>
-                        
-                        {showToolDropdown && (
-                            <>
-                                <TouchableOpacity
-                                    style={styles.toolDropdownBackdrop}
-                                    activeOpacity={1}
-                                    onPress={() => setShowToolDropdown(false)}
-                                />
-                                <View style={styles.toolDropdownMenu}>
-                                    {availableTools.map((tool, index) => {
-                                        const toolInfo = getToolInfo(tool)
-                                        const isLast = index === availableTools.length - 1
-                                        return (
-                                            <Pressable
-                                                key={tool}
-                                                style={({ pressed }) => [
-                                                    styles.toolDropdownItem,
-                                                    selectedTool === tool && styles.selectedToolDropdownItem,
-                                                    pressed && selectedTool !== tool && styles.pressedToolDropdownItem,
-                                                    isLast && styles.lastToolDropdownItem
-                                                ]}
-                                                onPress={() => {
-                                                    setSelectedTool(tool)
-                                                    setIsErasing(false)
-                                                    // Add a small delay to show the selection change before closing
-                                                    setTimeout(() => {
-                                                        setShowToolDropdown(false)
-                                                    }, 150)
-                                                }}
-                                            >
-                                                <MaterialCommunityIcons 
-                                                    name={toolInfo.icon as any} 
-                                                    size={20} 
-                                                    color={selectedTool === tool ? colors.paper : colors.ink} 
-                                                />
-                                                <Text style={[
-                                                    styles.toolDropdownItemText,
-                                                    selectedTool === tool && styles.selectedToolDropdownItemText
-                                                ]}>
-                                                    {toolInfo.name}
-                                                </Text>
-                                            </Pressable>
-                                        )
-                                    })}
-                                </View>
-                            </>
-                        )}
-                    </View>
-
-                    <View style={styles.brushDropdownContainer}>
-                        <TouchableOpacity 
-                            style={styles.brushDropdownButton}
-                            onPress={() => setShowBrushDropdown(!showBrushDropdown)}
-                        >
-                            <View style={[
-                                styles.brushLinePreview,
-                                { 
-                                    height: getBrushSizeInfo(selectedBrushSize).width,
-                                    backgroundColor: selectedColor 
-                                }
-                            ]} />
-                            <Feather 
-                                name={showBrushDropdown ? 'chevron-up' : 'chevron-down'} 
-                                size={14} 
-                                color={colors.ink} 
-                            />
-                        </TouchableOpacity>
-                        
-                        {showBrushDropdown && (
-                            <>
-                                <TouchableOpacity
-                                    style={styles.brushDropdownBackdrop}
-                                    activeOpacity={1}
-                                    onPress={() => setShowBrushDropdown(false)}
-                                />
-                                <View style={styles.brushDropdownMenu}>
-                                    {availableBrushSizes.map((size, index) => {
-                                        const sizeInfo = getBrushSizeInfo(size)
-                                        const isLast = index === availableBrushSizes.length - 1
-                                        return (
-                                            <Pressable
-                                                key={size}
-                                                style={({ pressed }) => [
-                                                    styles.brushDropdownItem,
-                                                    selectedBrushSize === size && styles.selectedBrushDropdownItem,
-                                                    pressed && selectedBrushSize !== size && styles.pressedBrushDropdownItem,
-                                                    isLast && styles.lastBrushDropdownItem
-                                                ]}
-                                                onPress={() => {
-                                                    setSelectedBrushSize(size)
-                                                    setIsErasing(false)
-                                                    // Add a small delay to show the selection change before closing
-                                                    setTimeout(() => {
-                                                        setShowBrushDropdown(false)
-                                                    }, 150)
-                                                }}
-                                            >
-                                                <View style={[
-                                                    styles.brushLinePreview,
-                                                    { 
-                                                        height: sizeInfo.width,
-                                                        backgroundColor: selectedColor 
-                                                    }
-                                                ]} />
-                                            </Pressable>
-                                        )
-                                    })}
-                                </View>
-                            </>
-                        )}
-                    </View>
-
-                    <TouchableOpacity
-                        style={[styles.eraserButton, isErasing && styles.selectedEraser]}
-                        onPress={() => {
-                            setIsErasing(v => !v)
-                        }}
-                    >
-                        <MaterialCommunityIcons name='eraser' size={20} color={isErasing ? colors.paper : colors.ink} />
-                    </TouchableOpacity>
+                    ...
                 </View>
             )}
+            */}
 
-            {/* Floating Mini Toolbar (when main toolbar is hidden) */}
+            {/* Floating Mini Toolbar — HIDDEN
             {!toolbarVisible && (
                 <View style={styles.floatingToolbar}>
-                    <TouchableOpacity
-                        style={styles.floatingButton}
-                        onPress={() => setToolbarVisible(true)}
-                    >
-                        <Feather name='chevron-up' size={18} color={colors.ink} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.floatingColorButton, { backgroundColor: selectedColor }]}
-                        onPress={() => setToolbarVisible(true)}
-                    />
-                    <TouchableOpacity
-                        style={[styles.floatingButton, isErasing && styles.floatingButtonActive]}
-                        onPress={() => {
-                            setIsErasing(v => !v)
-                        }}
-                    >
-                        <MaterialCommunityIcons name='eraser' size={18} color={isErasing ? colors.paper : colors.ink} />
-                    </TouchableOpacity>
+                    ...
                 </View>
             )}
+            */}
 
             {/* Clear Confirmation Modal */}
             <Modal
@@ -631,6 +424,34 @@ export default function NotebookCanvasV2() {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.paper },
+
+    /* Minimal header */
+    minHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 8,
+        paddingVertical: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.stroke,
+        backgroundColor: '#fdfcf8'
+    },
+    minHeaderBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: colors.stroke,
+        backgroundColor: colors.paper
+    },
+    minHeaderText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: colors.ink
+    },
+    disabled: { opacity: 0.5 },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -700,7 +521,6 @@ const styles = StyleSheet.create({
     },
     notebookLine: { height: 1, backgroundColor: 'rgba(79,109,156,0.1)', marginVertical: 15 },
     
-    // Not supported fallback
     notSupported: {
         flex: 1,
         alignItems: 'center',
@@ -728,7 +548,6 @@ const styles = StyleSheet.create({
         color: colors.paper
     },
 
-    // Toolbar styles
     toolbar: {
         backgroundColor: '#fdfcf8',
         borderTopWidth: 2,
@@ -755,7 +574,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 10,
         gap: 4,
-        minWidth: 115, // Increased to show full "Marker" text
+        minWidth: 115,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.08,
@@ -779,7 +598,7 @@ const styles = StyleSheet.create({
     },
     toolDropdownMenu: {
         position: 'absolute',
-        bottom: 50, // Position above the button instead of below
+        bottom: 50,
         left: -10,
         right: -10,
         backgroundColor: colors.paper,
@@ -805,7 +624,7 @@ const styles = StyleSheet.create({
         borderBottomColor: '#e8e3d6',
     },
     lastToolDropdownItem: {
-        borderBottomWidth: 0, // Remove border from last item
+        borderBottomWidth: 0,
     },
     selectedToolDropdownItem: {
         backgroundColor: colors.ink,
@@ -824,7 +643,6 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
 
-    // Brush dropdown styles
     brushDropdownContainer: {
         position: 'relative',
         alignItems: 'center',
@@ -839,7 +657,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 10,
         gap: 6,
-        minWidth: 50, // Reduced since no text
+        minWidth: 50,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.08,
@@ -946,14 +764,13 @@ const styles = StyleSheet.create({
     selectedEraser: {
         backgroundColor: colors.ink,
         borderColor: colors.ink,
-        shadowColor: colors.ink,
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.3,
         shadowRadius: 4,
         elevation: 4,
     },
 
-    // Toolbar toggle styles
     toolbarToggleContainer: {
         alignItems: 'center',
         paddingVertical: 4,
@@ -968,7 +785,6 @@ const styles = StyleSheet.create({
         borderColor: colors.stroke
     },
 
-    // Floating toolbar styles
     floatingToolbar: {
         position: 'absolute',
         bottom: 20,
@@ -1024,7 +840,6 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
 
-    // Modal styles
     modalOverlay: {
         flex: 1,
         backgroundColor: 'rgba(39, 76, 119, 0.4)',
@@ -1111,83 +926,5 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
         color: colors.paper
-    },
-    
-    // Color wheel overlay styles
-    colorWheelBackdrop: {
-        position: 'absolute',
-        top: -1000,
-        left: -1000,
-        right: -1000,
-        bottom: -1000,
-        zIndex: 5,
-    },
-    wheelViewport: {
-        position: 'absolute',
-        top: -60,
-        left: -5,         // shift left slightly to prevent clipping
-        width: 120,       // increased width to show full swatches without clipping
-        height: 180,
-        overflow: 'hidden',
-        zIndex: 10,
-        backgroundColor: 'transparent',
-    },
-    wheel: {
-        position: 'absolute',
-        width: 220,
-        height: 220,
-        left: -115,       // shift further left to account for viewport adjustment
-        top: -20,         // center vertically in 180px viewport ((180-220)/2)
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    /* Fades */
-    fadeLeft: {
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        bottom: 0,
-        width: 18,    // feather width; tweak to taste
-        zIndex: 12,
-    },
-    fadeTop: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: 18,
-        zIndex: 12,
-    },
-    fadeBottom: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: 18,
-        zIndex: 12,
-    },
-    
-    wheelTarget: {
-        position: 'absolute',
-        right: -4,    // keep the target on the visible right edge
-        top: 86,      // (180/2) - (8/2)
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-        backgroundColor: colors.ink,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.4,
-        shadowRadius: 3,
-        elevation: 8,
-        zIndex: 15,
-    },
-    curvedColorSwatch: {
-        position: 'absolute',
-        width: 28,
-        height: 28,
-        borderRadius: 14,
-        borderWidth: 2,
-        borderColor: colors.paper,
     },
 })
